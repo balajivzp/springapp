@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,7 +32,7 @@ public class CustomerLogController {
 	private CustomerLogJpaRepository jpaRepo;
 	
 	@GetMapping("/checkIn")
-	public @ResponseBody CustomerLog updateCheckIn(@RequestParam String name) {
+	public ResponseEntity<CustomerLog> updateCheckIn(@RequestParam String name) {
 		CustomerLog user = jpaRepo.findByname(name);
 		user.setLogType("IN");
 		user.setDate(getCurrDate());
@@ -38,10 +40,10 @@ public class CustomerLogController {
 		user.setId(user.getName()+getCurrTime());
 		
 		jpaRepo.save(user);
-		return user;
+		return new ResponseEntity<CustomerLog>(user, HttpStatus.OK);
 	}
 	@GetMapping("/checkOut")
-	public @ResponseBody CustomerLog updateCheckOut(@RequestParam String name) {
+	public ResponseEntity<CustomerLog> updateCheckOut(@RequestParam String name) {
 		CustomerLog user = jpaRepo.findByname(name);
 		user.setLogType("OUT");
 		user.setDate(getCurrDate());
@@ -49,19 +51,21 @@ public class CustomerLogController {
 		user.setId(user.getName()+getCurrTime());
 		
 		jpaRepo.save(user);
-		return user;
+		return new ResponseEntity<CustomerLog>(user, HttpStatus.OK);
 	}
 	
 	@GetMapping("/getLog")
-	public @ResponseBody  List<CustomerLog> getByDate(@RequestParam String date) {
+	public ResponseEntity<List<CustomerLog>> getByDate(@RequestParam String date) {
 		
-		return jpaRepo.findBydate(date);
+		List<CustomerLog> customerLogs = jpaRepo.findBydate(date);
+		return new ResponseEntity<List<CustomerLog>>(customerLogs, HttpStatus.OK);
 	}
 	
 	@GetMapping("/getAllLog")
-	public @ResponseBody  List<CustomerLog> getAllLog(@RequestParam String date) {
+	public ResponseEntity<List<CustomerLog>> getAllLog(@RequestParam String date) {
 		
-		return jpaRepo.findAll();
+		List<CustomerLog> customerLogs = jpaRepo.findAll();
+		return new ResponseEntity<List<CustomerLog>>(customerLogs, HttpStatus.OK);
 	}
 	
 		
